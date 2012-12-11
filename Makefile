@@ -1,6 +1,6 @@
 
 CC=arm-elf-gcc-4.6
-CFLAGS=-Iinclude -ansi -pedantic -Wall -Wextra -march=armv6 -msoft-float -fPIC -mapcs-frame
+CFLAGS=-Iinclude -ansi -pedantic -Wall -Wextra -march=armv6 -msoft-float -fPIC -mapcs-frame -marm
 LD=arm-elf-ld
 LDFLAGS=-N -Ttext=0x10000
 
@@ -19,4 +19,7 @@ build/bootstrap.o: src/bootstrap.s
 target/kernel: build/bootstrap.o build/kernel.o
 	mkdir -p target
 	$(LD) $(LDFLAGS) -o $@ $^
+
+clean:
+	rm -rf build target
 
