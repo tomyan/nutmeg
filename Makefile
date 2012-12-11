@@ -1,6 +1,6 @@
 
 CC=arm-elf-gcc-4.6
-CFLAGS=-ansi -pedantic -Wall -Wextra -march=armv6 -msoft-float -fPIC -mapcs-frame
+CFLAGS=-Iinclude -ansi -pedantic -Wall -Wextra -march=armv6 -msoft-float -fPIC -mapcs-frame
 LD=arm-elf-ld
 LDFLAGS=-N -Ttext=0x10000
 
