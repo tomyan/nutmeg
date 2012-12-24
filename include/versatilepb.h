@@ -16,3 +16,9 @@
 #define TIMER_32BIT 0x02
 #define TIMER_ONESHOT 0x01
 
+/* http://infocenter.arm.com/help/topic/com.arm.doc.dui0224i/I1042232.html */
+#define PIC ((volatile unsigned int*)0x10140000)
+#define PIC_TIMER01 0x10
+/* http://infocenter.arm.com/help/topic/com.arm.doc.ddi0181e/I1006461.html */
+#define VIC_INTENABLE 0x4 /* 0x10 bytes */
+

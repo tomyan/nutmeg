@@ -7,8 +7,8 @@ exit:
 
 .global usleep
 usleep:
-	push {r7}
-	mov r7, #0x2
-	svc 0
-	bx lr
+    push {r7}
+    mov r7, #0x2
+    svc 0
+    bx lr
 
