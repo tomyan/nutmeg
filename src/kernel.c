@@ -46,20 +46,20 @@ static void pointer_to_hex (const void* input, char* result[11]) {
     bwputs("DEBUG: " desc " "); \
     pointer_to_hex(p, paddr); \
     bwputs(*paddr); \
-    bwputs("\n"); \
+    bwputs("\n");
 
 
 void first_task(void) {
     bwputs("first task: started\n");
-    usleep(10 * 1000 * 1000);
-    bwputs("first task: after usleep(10s) - exiting\n");
+    usleep(2 * 1000 * 1000);
+    bwputs("first task: after usleep(2s) - exiting\n");
     exit(0);
 }
 
 void second_task(void) {
     bwputs("second task: started\n");
-    usleep(5 * 1000 * 1000);
-    bwputs("second task: after usleep(5s) - exiting\n");
+    usleep(1 * 1000 * 1000);
+    bwputs("second task: after usleep(1s) - exiting\n");
     exit(0);
 }
 
@@ -106,12 +106,12 @@ struct schedular_t {
 
 static __inline__ void schedular_t_init (struct schedular_t* self) {
     task_t_init(&self->idle_task, &idle);
-    dlist_container_init(active)
-    dlist_container_init(sleeping)
+    dlist_container_init(active);
+    dlist_container_init(sleeping);
 }
 
 static __inline__ void schedular_t_add_task (struct schedular_t* self, struct task_t* task) {
-    dlist_push(active, task)
+    dlist_push(active, task);
 }
 
 static __inline__ struct task_t* schedular_t_get_task (struct schedular_t* self, unsigned int tick_time) {
@@ -173,6 +173,9 @@ int main () {
     schedular_t_add_task(&schedular, &tasks[0]);
     schedular_t_add_task(&schedular, &tasks[1]);
 
+    *(PIC + VIC_INTENABLE) = PIC_UART0;
+    UART0_IMSC = 1 << 4;
+
     bwputs("starting...\n");
 
     while (1) {
@@ -182,16 +185,25 @@ int main () {
             case 0x1: /* exit */
                 bwputs("got exit\n");
                 current_task->status = TASK_EXITED_STATUS;
-                continue;
+                break;
             case 0x2: /* usleep */
                 schedular_t_task_sleep(&schedular, current_task); /* tick_time + current_task->current[2]); */
-                continue;
+                break;
             case -4: /* Timer 0 or 1 went off */
                 if(*(TIMER0 + TIMER_MIS)) { /* Timer0 went off */
                     tick_time += TICK_INTERVAL;
                     *(TIMER0 + TIMER_INTCLR) = 1; /* Clear interrupt */
                     /* bwputs("tock\n"); */
                 }
+                break;
+            case -12:
+                UART0_DR = UART0_DR;
+                break;
+            default:
+                bwputs("unknown status from interrupt\n");
+                /* TODO improve status output */
+                debugp("value", status);
+                while(1);
         }
     }
     return 0;
