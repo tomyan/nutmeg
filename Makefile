@@ -1,15 +1,19 @@
 
-CC=arm-elf-gcc-4.6
-CFLAGS=-Iinclude -ansi -pedantic -Wall -Wextra -march=armv6 -msoft-float -fPIC -mapcs-frame -marm -g
-LD=arm-elf-ld
+CC=arm-none-eabi-gcc
+# -fPIC -mapcs-frame -g 
+CFLAGS=-Iinclude -ansi -pedantic -Wall -Wextra -march=armv6 -mfpu=vfp -mfloat-abi=hard -marm
+LD=arm-none-eabi-ld
 LDFLAGS=-N -Ttext=0x10000
 UTHASH_VERSION=1.9.7
 
 run: target/kernel
 	echo "press ctrl+a followed by x to exit..."
-	qemu-system-arm -M versatilepb -cpu arm1176 -nographic -kernel target/kernel
+	qemu-system-arm -M versatilepb -cpu arm1176 -nographic -kernel target/kernel -serial mon:stdio -serial tcp::4444,server
 
-build/kernel.o: src/kernel.c include/dlist.h
+test: target/kernel
+	./test.js
+
+build/kernel.o: src/kernel.c include/dlist.h include/versatilepb.h
 	mkdir -p build
 	$(CC) $(CFLAGS) -c src/kernel.c -o $@
 

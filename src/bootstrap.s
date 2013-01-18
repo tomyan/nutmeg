@@ -11,6 +11,12 @@ keep_loading:
     cmp r1, r3
     bne keep_loading
 
+    ldr r0, =(0xF << 20)
+    mcr p15, 0, r0, c1, c0, 2
+
+    mov r3, #0x40000000 
+    vmsr FPEXC, r3
+
     ldr sp, =0x07FFFFFF
     bl main
 

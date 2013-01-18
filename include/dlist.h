@@ -19,10 +19,19 @@
     dlist_first(prefix) = NULL; \
     dlist_last(prefix) = NULL;
 
+#define dlist_extract_not_first(prefix, value) \
+    value->previous->next = value->next; \
+    if (value->next == NULL) { \
+        dlist_last(prefix) = value->previous; \
+    } \
+    else { \
+        value->next->previous = value->previous; \
+    }
+
 #define dlist_unshift(prefix, value) \
     value->next = dlist_first(prefix); \
     if (value->next == NULL) { \
-        dilist_last(prefix) = value; \
+        dlist_last(prefix) = value; \
     } \
     else { \
         value->next->previous = value; \
